@@ -16,9 +16,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-const helpMessage = `Select the service you want by pressing Enter when the arrow on the left points to it. 
+const helpMessage = `Select the desired service by pressing the Space bar when the arrow on the left points to it. 
 You can move the arrow to the keys j (down), k (up) or the arrows ↓ ↑. 
-Press the Ctrl + D key combination to start your selected services.
+Press the Enter key to start your selected services.
 `
 
 const (
@@ -155,7 +155,7 @@ var RunCmd = &cobra.Command{
 			}
 
 			switch key {
-			case keyboard.KeyCtrlD:
+			case keyboard.KeyEnter:
 				if len(selectedServices) > 0 {
 					for service := range dc.Services {
 						if _, ok := selectedServices[service]; !ok {
@@ -207,7 +207,7 @@ var RunCmd = &cobra.Command{
 				return nil
 			case keyboard.KeyCtrlC:
 				return nil
-			case keyboard.KeyEnter:
+			case keyboard.KeySpace:
 				cleanConsole()
 				fmt.Println(helpMessage, generateDashboard(dc, true, recordNumber))
 			default:

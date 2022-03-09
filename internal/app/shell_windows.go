@@ -10,10 +10,9 @@ import (
 )
 
 const (
-	powerShell          = "powershell"
-	cmdShell            = "cmd"
-	clearCommand        = "cls"
-	charSelectedService = " + "
+	powerShell   = "powershell"
+	cmdShell     = "cmd"
+	clearCommand = "cls"
 )
 
 func cleanConsole() {

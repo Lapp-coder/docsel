@@ -10,8 +10,7 @@ import (
 )
 
 const (
-	clearCommand        = "clear"
-	charSelectedService = " ✓ "
+	clearCommand          = "clear"
 )
 
 func cleanConsole() {

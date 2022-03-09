@@ -5,16 +5,16 @@ import (
 	"strings"
 	"sync"
 	"unicode/utf8"
-
-	"github.com/fatih/color"
 )
 
 const (
-	numOtherRune         = 16
-	numRuneForGreenColor = 9
-	numRuneForNewLine    = 1
-	numRuneForArrow      = 8 - numRuneForNewLine
-	recordArrow          = " ─────> "
+	widthDashboard    = 3
+	numOtherRune      = 5
+	numRuneForNewLine = 1
+	numRuneForArrow   = 8 - numRuneForNewLine
+	recordArrow       = " ─────> "
+	charSelectedService   = "[*]"
+	charNoSelectedService = "[ ]"
 )
 
 var (
@@ -22,7 +22,7 @@ var (
 	serviceNumbers              = make(map[string]int)
 	selectedServices            = make(map[string]struct{})
 	services                    = make([]string, 0)
-	maxKeyLen                   int
+	maxLenServiceName           int
 	dashboardTopLine            string
 	dashboardDownLine           string
 	runeCountInDashboardTopLine int
@@ -33,19 +33,19 @@ func generateDashboard(dc DockerCompose, serviceSelected bool, serviceNumber int
 
 	once.Do(func() {
 		var counter int
-		for key := range dc.Services {
+		for service := range dc.Services {
 			counter++
-			serviceNumbers[key] = counter
-			services = append(services, key)
+			serviceNumbers[service] = counter
+			services = append(services, service)
 
-			lenKey := utf8.RuneCountInString(key)
-			if lenKey > maxKeyLen {
-				maxKeyLen = lenKey
+			lenServiceName := utf8.RuneCountInString(service)
+			if lenServiceName > maxLenServiceName {
+				maxLenServiceName = lenServiceName
 			}
 		}
 
 		dashboardTopLine = "┌"
-		dashboardTopLine += strings.Repeat("─", maxKeyLen+digitsCount(len(services))+numOtherRune)
+		dashboardTopLine += strings.Repeat("─", maxLenServiceName+digitsCount(len(services))+numOtherRune+widthDashboard)
 		dashboardTopLine += "┐"
 
 		runeCountInDashboardTopLine = utf8.RuneCountInString(dashboardTopLine)
@@ -58,57 +58,49 @@ func generateDashboard(dc DockerCompose, serviceSelected bool, serviceNumber int
 
 	for _, service := range services {
 		var (
-			record             string
-			recordHasArrow     bool
-			recordHasCheckmark bool
+			record         string
+			recordHasArrow bool
 		)
 
 		if _, ok := selectedServices[service]; !ok {
 			if serviceNumber > 0 {
 				if serviceNumbers[service] == serviceNumber {
 					if serviceSelected {
-						record = fmt.Sprintf("%s│ %d. %s%s", recordArrow, serviceNumbers[service], service, color.GreenString(charSelectedService))
+						record = fmt.Sprintf("%s│ %s %s", recordArrow, charSelectedService, service)
 						selectedServices[service] = struct{}{}
-						recordHasCheckmark = true
 						recordHasArrow = true
 					} else {
-						record = fmt.Sprintf("%s│ %d. %s", recordArrow, serviceNumbers[service], service)
+						record = fmt.Sprintf("%s│ %s %s", recordArrow, charNoSelectedService, service)
 						recordHasArrow = true
 					}
 				} else {
-					record = fmt.Sprintf("\t│ %d. %s", serviceNumbers[service], service)
+					record = fmt.Sprintf("\t│ %s %s", charNoSelectedService, service)
 				}
 			} else {
-				record = fmt.Sprintf("\t│ %d. %s", serviceNumbers[service], service)
+				record = fmt.Sprintf("\t│ %s %s", charNoSelectedService, service)
 			}
 		} else {
 			if serviceNumber > 0 {
 				if serviceNumbers[service] == serviceNumber {
 					if serviceSelected {
-						record = fmt.Sprintf("%s│ %d. %s", recordArrow, serviceNumbers[service], service)
+						record = fmt.Sprintf("%s│ %s %s", recordArrow, charNoSelectedService, service)
 						delete(selectedServices, service)
 						recordHasArrow = true
 					} else {
-						record = fmt.Sprintf("%s│ %d. %s%s", recordArrow, serviceNumbers[service], service, color.GreenString(charSelectedService))
-						recordHasCheckmark = true
+						record = fmt.Sprintf("%s│ %s %s", recordArrow, charSelectedService, service)
 						recordHasArrow = true
 					}
 				} else {
-					record = fmt.Sprintf("\t│ %d. %s%s", serviceNumbers[service], service, color.GreenString(charSelectedService))
-					recordHasCheckmark = true
+					record = fmt.Sprintf("\t│ %s %s", charSelectedService, service)
 				}
 			} else {
-				record = fmt.Sprintf("\t│ %d. %s%s", serviceNumbers[service], service, color.GreenString(charSelectedService))
-				recordHasCheckmark = true
+				record = fmt.Sprintf("\t│ %s %s", charSelectedService, service)
 			}
 		}
 
 		runeCountInRecord := utf8.RuneCountInString(record)
 		numRepeatedEmptyChars := runeCountInDashboardTopLine - runeCountInRecord
 
-		if recordHasCheckmark {
-			numRepeatedEmptyChars += numRuneForGreenColor
-		}
 		if recordHasArrow {
 			numRepeatedEmptyChars += numRuneForArrow
 		}

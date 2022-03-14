@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	clearCommand          = "clear"
+	clearCommand = "clear"
 )
 
 func cleanConsole() {

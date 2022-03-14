@@ -41,13 +41,17 @@ const (
 	DefaultFlagDetachValue = false
 
 	FlagRemove             = "rm"
-	DescFlagRemove         = "Removes stopped service containers. Ignored in detached mode."
+	DescFlagRemove         = "Removes stopped service containers. Ignored in detached mode"
 	DefaultFlagRemoveValue = false
 
 	FlagSave             = "save"
 	ShorthandFlagSave    = "s"
 	DescFlagSave         = "Saves the docker-compose file generated with the selected services"
 	DefaultFlagSaveValue = false
+
+	FlagBuild             = "build"
+	DescFlagBuild         = "Build images before starting containers"
+	DefaultFlagBuildValue = false
 )
 
 var RootCmd = &cobra.Command{
@@ -173,9 +177,16 @@ var RunCmd = &cobra.Command{
 					}
 
 					if cmd.Flag(FlagDetach).Value.String() == "false" {
-						dockerCmd := exec.Command("docker-compose", "-f", filename, "up")
+						var dockerCmd *exec.Cmd
+						if cmd.Flag(FlagBuild).Value.String() == "true" {
+							dockerCmd = exec.Command("docker-compose", "-f", filename, "up", "--build")
+						} else {
+							dockerCmd = exec.Command("docker-compose", "-f", filename, "up")
+						}
+
 						dockerCmd.Stderr = os.Stderr
 						dockerCmd.Stdout = os.Stdout
+
 						if err := dockerCmd.Start(); err != nil {
 							return err
 						}
@@ -196,9 +207,16 @@ var RunCmd = &cobra.Command{
 						return dockerCmd.Run()
 					}
 
-					dockerCmd := exec.Command("docker-compose", "-f", filename, "up", "-d")
+					var dockerCmd *exec.Cmd
+					if cmd.Flag(FlagBuild).Value.String() == "true" {
+						dockerCmd = exec.Command("docker-compose", "-f", filename, "up", "-d", "--build")
+					} else {
+						dockerCmd = exec.Command("docker-compose", "-f", filename, "up", "-d")
+					}
+
 					dockerCmd.Stderr = os.Stderr
 					dockerCmd.Stdout = os.Stdout
+
 					return dockerCmd.Run()
 				}
 

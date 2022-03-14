@@ -20,6 +20,8 @@ func main() {
 	app.RunCmd.
 		PersistentFlags().
 		BoolP(app.FlagSave, app.ShorthandFlagSave, app.DefaultFlagSaveValue, app.DescFlagSave)
+	app.RunCmd.PersistentFlags().
+		Bool(app.FlagBuild, app.DefaultFlagBuildValue, app.DescFlagBuild)
 
 	app.RootCmd.AddCommand(app.RunCmd)
 	if err := app.RootCmd.Execute(); err != nil {

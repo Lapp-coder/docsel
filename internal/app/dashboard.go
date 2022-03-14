@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	widthDashboard    = 3
-	numOtherRune      = 5
-	numRuneForNewLine = 1
-	numRuneForArrow   = 8 - numRuneForNewLine
-	recordArrow       = " ─────> "
+	widthDashboard        = 3
+	numOtherRune          = 5
+	numRuneForNewLine     = 1
+	numRuneForArrow       = 8 - numRuneForNewLine
+	recordArrow           = " ─────> "
 	charSelectedService   = "[*]"
 	charNoSelectedService = "[ ]"
 )

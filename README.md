@@ -1,5 +1,5 @@
 # Docsel 
-[![Go](https://img.shields.io/badge/go-1.17-blue)](https://golang.org/doc/go1.17) [![Release](https://img.shields.io/badge/release-1.1.0-success)](https://github.com/Lapp-coder/docsel/releases)
+[![Go](https://img.shields.io/badge/go-1.17-blue)](https://golang.org/doc/go1.17) [![Release](https://img.shields.io/badge/release-1.1.1-success)](https://github.com/Lapp-coder/docsel/releases)
 
 Docsel is a utility that allows you to run the services you choose based on the docker-compose file.
 
